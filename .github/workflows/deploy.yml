@@ -1,0 +1,35 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master  # Triggers on direct pushes AND merged PRs to master
+
+permissions:
+  contents: write # Required to let the action push the deployment to gh-pages
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Angular App
+        # Replace <repo-name> with your actual repository name (e.g., /my-app/)
+        run: npm run build -- --configuration production --base-href /kitchen-companion-ui/
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: dist/kitchen-companion/browser # CHECK THIS PATH in angular.json (outputPath)
