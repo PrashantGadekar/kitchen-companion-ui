@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -10,6 +11,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 })
 export class Login {
   private readonly fb = new FormBuilder();
+  private readonly router = inject(Router);
 
   protected readonly loginForm = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
@@ -33,10 +35,10 @@ export class Login {
     this.isSubmitting.set(true);
     this.errorMessage.set('');
 
-    // Simulate login — replace with real auth service
+    // Simulate login — replace with real auth service later
     setTimeout(() => {
       this.isSubmitting.set(false);
-      this.errorMessage.set('Login service not yet configured.');
-    }, 1200);
+      this.router.navigate(['/dashboard']);
+    }, 800);
   }
 }
