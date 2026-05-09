@@ -1,0 +1,120 @@
+<!-- Top Toolbar -->
+<header class="toolbar">
+  <div class="toolbar-inner">
+    <!-- Hamburger (mobile) -->
+    <button
+      class="menu-btn lg:hidden"
+      (click)="toggleSidenav()"
+      [attr.aria-expanded]="sidenavOpen()"
+      aria-label="Toggle navigation menu"
+    >
+      <span class="material-symbols-outlined text-2xl">menu</span>
+    </button>
+
+    <!-- Logo -->
+    <a routerLink="/dashboard" class="logo-link" (click)="closeSidenav()">
+      <span class="logo-emoji" aria-hidden="true">🍳</span>
+      <span class="logo-text">Kitchen Companion</span>
+    </a>
+
+    <!-- Spacer -->
+    <div class="flex-1"></div>
+
+    <!-- Desktop nav quick actions -->
+    <div class="hidden lg:flex items-center gap-2">
+      <span class="text-sm text-slate-500">
+        @if (shoppingBadge(); as count) {
+          <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-700 px-2.5 py-0.5 text-xs font-medium">
+            <span class="material-symbols-outlined text-sm">warning</span>
+            {{ count }} low stock
+          </span>
+        }
+      </span>
+    </div>
+
+    <!-- User avatar -->
+    <button class="avatar-btn" aria-label="User menu">
+      <span class="avatar-circle">KC</span>
+    </button>
+  </div>
+</header>
+
+<!-- Backdrop (mobile) -->
+@if (sidenavOpen()) {
+  <div
+    class="sidenav-backdrop lg:hidden"
+    (click)="closeSidenav()"
+    aria-hidden="true"
+  ></div>
+}
+
+<!-- Sidenav -->
+<aside
+  class="sidenav"
+  [class.sidenav-open]="sidenavOpen()"
+  role="navigation"
+  aria-label="Main navigation"
+>
+  <!-- Sidenav header -->
+  <div class="sidenav-header">
+    <span class="text-2xl" aria-hidden="true">🍳</span>
+    <span class="text-lg font-bold text-slate-800">Kitchen Companion</span>
+    <button
+      class="ml-auto lg:hidden text-slate-400 hover:text-slate-600 p-1"
+      (click)="closeSidenav()"
+      aria-label="Close navigation"
+    >
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <!-- Nav links -->
+  <nav class="sidenav-nav">
+    @for (item of navItems; track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="nav-link-active"
+        class="nav-link"
+        (click)="onNavClick()"
+      >
+        <span class="material-symbols-outlined text-xl">{{ item.icon }}</span>
+        <span class="nav-label">{{ item.label }}</span>
+        @if (item.route === '/shopping-list' && shoppingBadge(); as count) {
+          <span class="nav-badge">{{ count }}</span>
+        }
+      </a>
+    }
+  </nav>
+
+  <!-- Sidenav footer -->
+  <div class="sidenav-footer">
+    <button class="nav-link text-red-500 hover:bg-red-50" (click)="logout()">
+      <span class="material-symbols-outlined text-xl">logout</span>
+      <span class="nav-label">Logout</span>
+    </button>
+  </div>
+</aside>
+
+<!-- Main content -->
+<main class="main-content">
+  <router-outlet />
+</main>
+
+<!-- Bottom Navigation (mobile) -->
+<nav class="bottom-nav lg:hidden" aria-label="Bottom navigation">
+  @for (item of bottomNavItems(); track item.route) {
+    <a
+      [routerLink]="item.route"
+      routerLinkActive="bottom-nav-active"
+      class="bottom-nav-item"
+    >
+      <span class="relative">
+        <span class="material-symbols-outlined text-2xl">{{ item.icon }}</span>
+        @if (item.route === '/shopping-list' && shoppingBadge(); as count) {
+          <span class="bottom-badge">{{ count }}</span>
+        }
+      </span>
+      <span class="bottom-nav-label">{{ item.label }}</span>
+    </a>
+  }
+</nav>

@@ -1,0 +1,160 @@
+<!-- Backdrop -->
+<div class="dialog-backdrop" (click)="close()">
+  <div class="dialog-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true"
+       [attr.aria-label]="isEditMode() ? 'Edit item' : 'Add new item'">
+
+    <!-- Header -->
+    <div class="dialog-header">
+      <h2 class="dialog-title">{{ isEditMode() ? 'Edit Item' : 'Add New Item' }}</h2>
+      <button class="close-btn" (click)="close()" aria-label="Close">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-body" autocomplete="off">
+
+      <!-- Item Name -->
+      <div class="field">
+        <label for="itemName" class="field-label">Item Name <span class="text-red-500">*</span></label>
+        <input
+          id="itemName"
+          type="text"
+          formControlName="name"
+          class="field-input"
+          placeholder="e.g. Basmati Rice"
+          [attr.aria-invalid]="form.controls.name.touched && form.controls.name.invalid"
+        />
+        @if (form.controls.name.touched && form.controls.name.invalid) {
+          <p class="field-error" role="alert">
+            @if (form.controls.name.errors?.['required']) {
+              Name is required.
+            } @else if (form.controls.name.errors?.['minlength']) {
+              At least 2 characters.
+            }
+          </p>
+        }
+      </div>
+
+      <!-- Category -->
+      <div class="field">
+        <label class="field-label">Category <span class="text-red-500">*</span></label>
+        <div class="chip-grid">
+          @for (cat of categories; track cat) {
+            <button
+              type="button"
+              class="chip"
+              [class.chip-active]="form.controls.category.value === cat"
+              (click)="setCategory(cat)"
+            >
+              <span aria-hidden="true">{{ categoryIcons[cat] }}</span>
+              <span>{{ cat }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Quantity + Unit -->
+      <div class="field-row">
+        <div class="field flex-1">
+          <label for="quantity" class="field-label">Quantity <span class="text-red-500">*</span></label>
+          <input
+            id="quantity"
+            type="number"
+            formControlName="quantity"
+            class="field-input"
+            min="0"
+            step="any"
+            placeholder="0"
+          />
+          @if (form.controls.quantity.touched && form.controls.quantity.invalid) {
+            <p class="field-error" role="alert">Enter a valid quantity.</p>
+          }
+        </div>
+        <div class="field w-32">
+          <label class="field-label">Unit <span class="text-red-500">*</span></label>
+          <div class="unit-chips">
+            @for (u of units; track u) {
+              <button
+                type="button"
+                class="unit-chip"
+                [class.unit-chip-active]="form.controls.unit.value === u"
+                (click)="setUnit(u)"
+              >
+                {{ u }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Min Threshold -->
+      <div class="field">
+        <label for="threshold" class="field-label">Minimum Threshold <span class="text-red-500">*</span></label>
+        <div class="threshold-hint">
+          <span class="material-symbols-outlined text-amber-500 text-sm">info</span>
+          <span class="text-xs text-slate-400">You'll be alerted when stock drops below this</span>
+        </div>
+        <input
+          id="threshold"
+          type="number"
+          formControlName="minimumThreshold"
+          class="field-input"
+          min="0"
+          step="any"
+          placeholder="0"
+        />
+      </div>
+
+      <!-- Storage Location -->
+      <div class="field">
+        <label class="field-label">Storage Location <span class="text-red-500">*</span></label>
+        <div class="chip-grid">
+          @for (loc of storageLocations; track loc) {
+            <button
+              type="button"
+              class="chip"
+              [class.chip-active]="form.controls.storageLocation.value === loc"
+              (click)="setStorage(loc)"
+            >
+              <span>{{ loc }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Expiry Date -->
+      <div class="field">
+        <label for="expiryDate" class="field-label">Expiry Date <span class="text-slate-400 text-xs font-normal">(optional)</span></label>
+        <input
+          id="expiryDate"
+          type="date"
+          formControlName="expiryDate"
+          class="field-input"
+          [min]="todayStr"
+        />
+      </div>
+
+      <!-- Notes -->
+      <div class="field">
+        <label for="notes" class="field-label">Notes <span class="text-slate-400 text-xs font-normal">(optional)</span></label>
+        <textarea
+          id="notes"
+          formControlName="notes"
+          class="field-input field-textarea"
+          rows="2"
+          placeholder="Any additional notes…"
+        ></textarea>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="close()">Cancel</button>
+        <button type="submit" class="btn-save">
+          <span class="material-symbols-outlined text-lg">{{ isEditMode() ? 'save' : 'add' }}</span>
+          {{ isEditMode() ? 'Save Changes' : 'Add Item' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

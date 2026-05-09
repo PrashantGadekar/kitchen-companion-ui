@@ -1,0 +1,134 @@
+@reference "tailwindcss";
+
+/* ─── Toolbar ─── */
+.toolbar {
+  @apply fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/60;
+}
+
+.toolbar-inner {
+  @apply flex items-center gap-3 px-4 h-14 lg:h-16 lg:pl-64;
+}
+
+.menu-btn {
+  @apply flex items-center justify-center w-10 h-10 rounded-xl text-slate-600
+         hover:bg-slate-100 active:bg-slate-200 transition-colors;
+}
+
+.logo-link {
+  @apply flex items-center gap-2 no-underline;
+}
+
+.logo-emoji {
+  @apply text-2xl lg:hidden;
+}
+
+.logo-text {
+  @apply text-lg font-bold text-slate-800 hidden sm:inline lg:hidden;
+}
+
+.avatar-btn {
+  @apply flex items-center justify-center;
+}
+
+.avatar-circle {
+  @apply flex items-center justify-center w-9 h-9 rounded-full
+         bg-gradient-to-br from-emerald-400 to-teal-500 text-white text-sm font-bold
+         shadow-sm;
+}
+
+/* ─── Sidenav Backdrop ─── */
+.sidenav-backdrop {
+  @apply fixed inset-0 z-40 bg-black/40 backdrop-blur-sm;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* ─── Sidenav ─── */
+.sidenav {
+  @apply fixed top-0 left-0 z-50 h-full w-72 bg-white border-r border-slate-200/60
+         flex flex-col
+         transform -translate-x-full transition-transform duration-300 ease-out
+         lg:translate-x-0 lg:z-30;
+}
+
+.sidenav-open {
+  @apply translate-x-0;
+}
+
+.sidenav-header {
+  @apply flex items-center gap-3 px-5 h-16 border-b border-slate-100;
+}
+
+.sidenav-nav {
+  @apply flex-1 overflow-y-auto py-4 px-3 space-y-1;
+}
+
+.sidenav-footer {
+  @apply border-t border-slate-100 p-3;
+}
+
+/* ─── Nav Links ─── */
+.nav-link {
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+         text-slate-600 no-underline
+         hover:bg-slate-100 hover:text-slate-900
+         transition-all duration-150;
+}
+
+.nav-link-active {
+  @apply bg-emerald-50 text-emerald-700 hover:bg-emerald-50;
+}
+
+.nav-link-active .material-symbols-outlined {
+  @apply text-emerald-600;
+}
+
+.nav-label {
+  @apply flex-1;
+}
+
+.nav-badge {
+  @apply inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full
+         bg-amber-500 text-white text-xs font-bold;
+}
+
+/* ─── Main Content ─── */
+.main-content {
+  @apply pt-14 pb-20 lg:pt-16 lg:pb-4 lg:pl-72 min-h-screen bg-slate-50;
+}
+
+/* ─── Bottom Navigation ─── */
+.bottom-nav {
+  @apply fixed bottom-0 left-0 right-0 z-40
+         flex items-stretch justify-around
+         bg-white/90 backdrop-blur-xl
+         border-t border-slate-200/60
+         h-16 px-1;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav-item {
+  @apply flex flex-col items-center justify-center gap-0.5 flex-1
+         text-slate-400 no-underline
+         transition-colors duration-150
+         active:scale-95;
+}
+
+.bottom-nav-active {
+  @apply text-emerald-600;
+}
+
+.bottom-nav-label {
+  @apply text-[10px] font-medium leading-tight;
+}
+
+.bottom-badge {
+  @apply absolute -top-1 -right-2 inline-flex items-center justify-center
+         min-w-4 h-4 px-1 rounded-full
+         bg-amber-500 text-white text-[9px] font-bold;
+}
+
+/* ─── Animations ─── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

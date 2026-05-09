@@ -1,0 +1,153 @@
+@reference "tailwindcss";
+
+/* ─── Dashboard Container ─── */
+.dashboard {
+  @apply p-4 lg:p-6 space-y-5 max-w-6xl mx-auto;
+}
+
+/* ─── Header ─── */
+.dash-header {
+  @apply flex items-center justify-between;
+}
+
+.quick-add-btn {
+  @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-xl
+         bg-emerald-600 text-white text-sm font-semibold no-underline
+         hover:bg-emerald-700 active:scale-95 transition-all shadow-sm;
+}
+
+/* ─── Stats Grid ─── */
+.stats-grid {
+  @apply grid grid-cols-2 lg:grid-cols-4 gap-3;
+}
+
+.stat-card {
+  @apply flex items-center gap-3 p-4 rounded-2xl bg-white
+         border border-slate-100 shadow-sm no-underline
+         hover:shadow-md hover:border-slate-200 transition-all;
+}
+
+.stat-icon {
+  @apply flex items-center justify-center w-11 h-11 rounded-xl flex-shrink-0;
+}
+
+.stat-info {
+  @apply flex flex-col min-w-0;
+}
+
+.stat-value {
+  @apply text-2xl font-bold text-slate-800 leading-tight;
+}
+
+.stat-label {
+  @apply text-xs text-slate-500 font-medium;
+}
+
+/* ─── Section ─── */
+.section {
+  @apply bg-white rounded-2xl border border-slate-100 shadow-sm p-4;
+}
+
+.section-header {
+  @apply flex items-center justify-between mb-3;
+}
+
+.section-title {
+  @apply flex items-center gap-2 text-base font-semibold text-slate-800 m-0;
+}
+
+.see-all-link {
+  @apply text-sm text-emerald-600 font-medium no-underline hover:text-emerald-700;
+}
+
+/* ─── Quick Actions ─── */
+.actions-grid {
+  @apply grid grid-cols-3 gap-3 mt-3;
+}
+
+.action-card {
+  @apply flex flex-col items-center gap-2 p-4 rounded-xl
+         no-underline hover:bg-slate-50 active:scale-95 transition-all;
+}
+
+.action-icon {
+  @apply flex items-center justify-center w-12 h-12 rounded-2xl;
+}
+
+.action-label {
+  @apply text-xs font-medium text-slate-600 text-center;
+}
+
+/* ─── Two Column Grid ─── */
+.two-col-grid {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-5;
+}
+
+/* ─── Alert List ─── */
+.alert-list {
+  @apply space-y-1;
+}
+
+.alert-item {
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-xl
+         hover:bg-slate-50 transition-colors;
+}
+
+.alert-item.out-of-stock {
+  @apply bg-red-50/50;
+}
+
+.alert-emoji {
+  @apply text-xl flex-shrink-0;
+}
+
+.alert-name {
+  @apply text-sm font-medium text-slate-800 truncate m-0;
+}
+
+.alert-detail {
+  @apply text-xs text-slate-400 m-0;
+}
+
+/* ─── Badges ─── */
+.stock-badge {
+  @apply text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 uppercase tracking-wide;
+}
+
+.stock-badge-low {
+  @apply bg-amber-100 text-amber-700;
+}
+
+.stock-badge-out {
+  @apply bg-red-100 text-red-700;
+}
+
+.expiry-badge {
+  @apply text-[10px] font-bold px-2 py-0.5 rounded-full
+         bg-purple-100 text-purple-700 flex-shrink-0;
+}
+
+/* ─── Empty State ─── */
+.empty-state-small {
+  @apply flex flex-col items-center justify-center py-8 gap-2;
+}
+
+/* ─── Category / Storage Grid ─── */
+.category-grid {
+  @apply space-y-1 mt-3;
+}
+
+.category-chip {
+  @apply flex items-center gap-3 px-3 py-2 rounded-xl
+         hover:bg-slate-50 transition-colors;
+}
+
+/* ─── Recent List ─── */
+.recent-list {
+  @apply space-y-1;
+}
+
+.recent-item {
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-xl
+         hover:bg-slate-50 transition-colors;
+}

@@ -1,0 +1,292 @@
+<div class="inventory-page">
+  <!-- Header -->
+  <div class="inv-header">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">Inventory</h1>
+      <p class="text-slate-500 text-sm mt-0.5">{{ resultCount() }} of {{ totalCount() }} items</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <!-- View toggle -->
+      <button
+        class="view-toggle-btn"
+        (click)="viewMode.set(viewMode() === 'card' ? 'list' : 'card')"
+        [attr.aria-label]="viewMode() === 'card' ? 'Switch to list view' : 'Switch to card view'"
+      >
+        <span class="material-symbols-outlined text-lg">
+          {{ viewMode() === 'card' ? 'view_list' : 'grid_view' }}
+        </span>
+      </button>
+
+      <!-- Sort -->
+      <select
+        class="sort-select"
+        [ngModel]="sortBy()"
+        (ngModelChange)="sortBy.set($event)"
+        aria-label="Sort items"
+      >
+        <option value="updated">Recent</option>
+        <option value="name">Name</option>
+        <option value="quantity">Quantity</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <span class="material-symbols-outlined text-slate-400 text-xl">search</span>
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Search items, categories, locations…"
+      [ngModel]="searchQuery()"
+      (ngModelChange)="searchQuery.set($event)"
+      aria-label="Search inventory"
+    />
+    @if (searchQuery()) {
+      <button class="clear-search" (click)="searchQuery.set('')" aria-label="Clear search">
+        <span class="material-symbols-outlined text-lg">close</span>
+      </button>
+    }
+  </div>
+
+  <!-- Category Filters -->
+  <div class="filter-scroll">
+    @for (cat of categories; track cat) {
+      <button
+        class="filter-chip"
+        [class.filter-chip-active]="selectedCategory() === cat"
+        (click)="toggleCategory(cat)"
+      >
+        <span aria-hidden="true">{{ categoryIcons[cat] }}</span>
+        <span>{{ cat }}</span>
+      </button>
+    }
+    @if (selectedCategory() || searchQuery()) {
+      <button class="filter-chip filter-chip-clear" (click)="clearFilters()">
+        <span class="material-symbols-outlined text-sm">close</span>
+        Clear
+      </button>
+    }
+  </div>
+
+  <!-- Items -->
+  @if (filteredItems().length === 0) {
+    <!-- Empty State -->
+    <div class="empty-state">
+      <div class="empty-icon-wrap">
+        <span class="material-symbols-outlined text-5xl text-slate-300">inventory_2</span>
+      </div>
+      <h3 class="text-lg font-semibold text-slate-700 mt-4">No items found</h3>
+      <p class="text-slate-400 text-sm mt-1 max-w-xs text-center">
+        @if (searchQuery() || selectedCategory()) {
+          Try adjusting your search or filters.
+        } @else {
+          Start by adding your first kitchen item!
+        }
+      </p>
+      @if (searchQuery() || selectedCategory()) {
+        <button class="mt-4 text-sm text-emerald-600 font-medium" (click)="clearFilters()">
+          Clear all filters
+        </button>
+      }
+    </div>
+  } @else {
+    <!-- Card View -->
+    @if (viewMode() === 'card') {
+      <div class="items-grid">
+        @for (item of filteredItems(); track item.id) {
+          <div
+            class="item-card"
+            [class.item-card-low]="isLowStock(item)"
+            [class.item-card-out]="isOutOfStock(item)"
+          >
+            <!-- Card Header -->
+            <div class="card-top">
+              <span class="card-emoji" aria-hidden="true">{{ categoryIcons[item.category] }}</span>
+              <div class="flex-1 min-w-0">
+                <p class="card-name">{{ item.name }}</p>
+                <p class="card-category">{{ item.category }}</p>
+              </div>
+              @if (isOutOfStock(item)) {
+                <span class="badge badge-out">Out</span>
+              } @else if (isLowStock(item)) {
+                <span class="badge badge-low">Low</span>
+              }
+            </div>
+
+            <!-- Quantity -->
+            <div class="card-quantity-section">
+              <div class="card-qty-row">
+                <span class="card-qty">{{ item.quantity }}</span>
+                <span class="card-unit">{{ item.unit }}</span>
+              </div>
+              <!-- Stock bar -->
+              <div class="stock-bar-track">
+                <div
+                  class="stock-bar-fill"
+                  [class.stock-bar-ok]="!isLowStock(item) && !isOutOfStock(item)"
+                  [class.stock-bar-low]="isLowStock(item)"
+                  [class.stock-bar-out]="isOutOfStock(item)"
+                  [style.width.%]="stockPercent(item)"
+                ></div>
+              </div>
+              <p class="card-threshold">Min: {{ item.minimumThreshold }} {{ item.unit }}</p>
+            </div>
+
+            <!-- Meta -->
+            <div class="card-meta">
+              <span class="card-meta-item">
+                <span aria-hidden="true">{{ storageIcons[item.storageLocation] }}</span>
+                {{ item.storageLocation }}
+              </span>
+              <span class="card-meta-item text-slate-400">
+                {{ formatDate(item.lastUpdated) }}
+              </span>
+            </div>
+
+            <!-- Actions -->
+            <div class="card-actions">
+              <button
+                class="action-btn action-consume"
+                (click)="openConsumeDialog(item, $event)"
+                [disabled]="isOutOfStock(item)"
+                aria-label="Consume {{ item.name }}"
+              >
+                <span class="material-symbols-outlined text-base">remove_circle</span>
+                Consume
+              </button>
+              <button
+                class="action-btn action-edit"
+                (click)="openEditDialog(item, $event)"
+                aria-label="Edit {{ item.name }}"
+              >
+                <span class="material-symbols-outlined text-base">edit</span>
+              </button>
+              <button
+                class="action-btn action-delete"
+                (click)="deleteItem(item, $event)"
+                aria-label="Delete {{ item.name }}"
+              >
+                <span class="material-symbols-outlined text-base">delete</span>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <!-- List View -->
+      <div class="items-list">
+        @for (item of filteredItems(); track item.id) {
+          <div
+            class="list-item"
+            [class.list-item-low]="isLowStock(item)"
+            [class.list-item-out]="isOutOfStock(item)"
+          >
+            <span class="list-emoji" aria-hidden="true">{{ categoryIcons[item.category] }}</span>
+            <div class="flex-1 min-w-0">
+              <p class="list-name">{{ item.name }}</p>
+              <p class="list-detail">{{ item.storageLocation }} · {{ formatDate(item.lastUpdated) }}</p>
+            </div>
+            <div class="list-qty-col">
+              <span class="list-qty">{{ item.quantity }} {{ item.unit }}</span>
+              @if (isOutOfStock(item)) {
+                <span class="badge badge-out text-[9px]">Out</span>
+              } @else if (isLowStock(item)) {
+                <span class="badge badge-low text-[9px]">Low</span>
+              }
+            </div>
+            <button
+              class="list-consume-btn"
+              (click)="openConsumeDialog(item, $event)"
+              [disabled]="isOutOfStock(item)"
+              aria-label="Consume {{ item.name }}"
+            >
+              <span class="material-symbols-outlined text-lg">remove_circle</span>
+            </button>
+            <button
+              class="list-consume-btn"
+              (click)="openEditDialog(item, $event)"
+              aria-label="Edit {{ item.name }}"
+            >
+              <span class="material-symbols-outlined text-lg">edit</span>
+            </button>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- FAB -->
+  <button class="fab" aria-label="Add new item" (click)="openAddDialog()">
+    <span class="material-symbols-outlined text-2xl">add</span>
+  </button>
+</div>
+
+<!-- Consume Dialog -->
+@if (consumeDialogItem(); as item) {
+  <div class="dialog-backdrop" (click)="closeConsumeDialog()">
+    <div class="dialog-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-label="Consume item">
+      <div class="dialog-header">
+        <h3 class="text-lg font-bold text-slate-800">Consume {{ item.name }}</h3>
+        <button class="dialog-close" (click)="closeConsumeDialog()" aria-label="Close dialog">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <p class="text-sm text-slate-500 mt-1">
+        Available: <strong class="text-slate-700">{{ item.quantity }} {{ item.unit }}</strong>
+      </p>
+
+      <!-- Quick amounts -->
+      <div class="quick-amounts">
+        @for (amount of getQuickAmounts(item); track amount) {
+          <button
+            class="quick-btn"
+            [class.quick-btn-active]="consumeAmount() === amount"
+            (click)="setQuickConsume(amount)"
+          >
+            {{ amount }} {{ item.unit }}
+          </button>
+        }
+      </div>
+
+      <!-- Custom amount -->
+      <div class="consume-input-row">
+        <label for="consumeInput" class="text-sm text-slate-600 font-medium">Custom:</label>
+        <input
+          id="consumeInput"
+          type="number"
+          class="consume-input"
+          [min]="0"
+          [max]="item.quantity"
+          step="any"
+          [ngModel]="consumeAmount()"
+          (ngModelChange)="consumeAmount.set($event)"
+          placeholder="0"
+        />
+        <span class="text-sm text-slate-500">{{ item.unit }}</span>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="btn-cancel" (click)="closeConsumeDialog()">Cancel</button>
+        <button
+          class="btn-confirm"
+          [disabled]="consumeAmount() <= 0 || consumeAmount() > item.quantity"
+          (click)="confirmConsume()"
+        >
+          Consume {{ consumeAmount() }} {{ item.unit }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Add/Edit Form Dialog -->
+@if (showFormDialog()) {
+  <app-item-form-dialog
+    [item]="editingItem()"
+    (closed)="closeFormDialog()"
+    (saved)="onItemSaved($event)"
+    (updated)="onItemUpdated($event)"
+  />
+}

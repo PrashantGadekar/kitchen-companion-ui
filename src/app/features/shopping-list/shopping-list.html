@@ -1,0 +1,134 @@
+<div class="shopping-page">
+  <!-- Header -->
+  <div class="shop-header">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">Shopping List</h1>
+      <p class="text-slate-500 text-sm mt-0.5">
+        {{ pendingCount() }} items to buy
+        @if (purchasedCount() > 0) {
+          · {{ purchasedCount() }} purchased
+        }
+      </p>
+    </div>
+    @if (totalCount() > 0) {
+      <div class="flex items-center gap-2">
+        <button
+          class="header-action-btn"
+          (click)="clearAllPurchased()"
+          [disabled]="purchasedCount() === 0"
+          aria-label="Uncheck all"
+        >
+          <span class="material-symbols-outlined text-lg">restart_alt</span>
+        </button>
+        <button
+          class="header-action-btn"
+          (click)="markAllPurchased()"
+          [disabled]="purchasedCount() === totalCount()"
+          aria-label="Check all"
+        >
+          <span class="material-symbols-outlined text-lg">done_all</span>
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- Progress Bar -->
+  @if (totalCount() > 0) {
+    <div class="progress-card">
+      <div class="progress-top">
+        <span class="text-sm font-medium text-slate-700">Progress</span>
+        <span class="text-sm font-bold text-emerald-600">{{ progressPercent() }}%</span>
+      </div>
+      <div class="progress-track">
+        <div
+          class="progress-fill"
+          [style.width.%]="progressPercent()"
+        ></div>
+      </div>
+      <p class="text-xs text-slate-400 mt-1.5">
+        {{ purchasedCount() }} of {{ totalCount() }} items purchased
+      </p>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (totalCount() === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <span class="material-symbols-outlined text-5xl text-emerald-300">shopping_cart</span>
+      </div>
+      <h3 class="text-lg font-semibold text-slate-700 mt-4">All stocked up!</h3>
+      <p class="text-slate-400 text-sm mt-1 max-w-xs text-center">
+        Your kitchen inventory is well maintained. Items will appear here when stock runs low.
+      </p>
+      <a routerLink="/inventory" class="mt-5 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold no-underline hover:bg-emerald-700 active:scale-95 transition-all">
+        <span class="material-symbols-outlined text-lg">inventory_2</span>
+        View Inventory
+      </a>
+    </div>
+  } @else {
+    <!-- Grouped Items -->
+    <div class="groups-list">
+      @for (group of groupedItems(); track group.category) {
+        <div class="group-section">
+          <!-- Group Header -->
+          <div class="group-header">
+            <span class="group-emoji" aria-hidden="true">{{ categoryIcons[group.category] }}</span>
+            <span class="group-title">{{ group.category }}</span>
+            <span class="group-count">
+              {{ groupPurchasedCount(group) }}/{{ group.items.length }}
+            </span>
+          </div>
+
+          <!-- Group Items -->
+          <div class="group-items">
+            @for (item of group.items; track item.inventoryItemId) {
+              <button
+                class="shop-item"
+                [class.shop-item-purchased]="item.purchased"
+                (click)="togglePurchased(item)"
+              >
+                <!-- Checkbox -->
+                <div class="checkbox" [class.checkbox-checked]="item.purchased">
+                  @if (item.purchased) {
+                    <span class="material-symbols-outlined text-sm text-white">check</span>
+                  }
+                </div>
+
+                <!-- Item Info -->
+                <div class="flex-1 min-w-0">
+                  <p class="shop-item-name" [class.line-through]="item.purchased">
+                    {{ item.name }}
+                  </p>
+                  <p class="shop-item-detail">
+                    Have {{ item.currentQuantity }} {{ item.unit }}
+                    · Need {{ item.requiredQuantity }} {{ item.unit }}
+                  </p>
+                </div>
+
+                <!-- Quantity badge -->
+                <span class="qty-badge" [class.qty-badge-zero]="item.currentQuantity === 0">
+                  @if (item.currentQuantity === 0) {
+                    Out
+                  } @else {
+                    {{ item.currentQuantity }} {{ item.unit }}
+                  }
+                </span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Restock Action -->
+    @if (purchasedCount() > 0) {
+      <div class="restock-bar">
+        <button class="restock-btn" (click)="restockPurchased()">
+          <span class="material-symbols-outlined text-lg">inventory</span>
+          Restock {{ purchasedCount() }} purchased items
+        </button>
+      </div>
+    }
+  }
+</div>

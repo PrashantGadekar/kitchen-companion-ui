@@ -1,0 +1,144 @@
+<div class="login-container">
+  <!-- Left: Branding Panel -->
+  <div class="brand-panel" aria-hidden="true">
+    <div class="brand-content">
+      <div class="brand-icon">🍳</div>
+      <h1 class="brand-title">Kitchen Companion</h1>
+      <p class="brand-tagline">Your personal sous-chef, powered by intelligence.</p>
+      <div class="brand-dots">
+        <span class="dot dot-1"></span>
+        <span class="dot dot-2"></span>
+        <span class="dot dot-3"></span>
+      </div>
+    </div>
+    <div class="brand-overlay"></div>
+  </div>
+
+  <!-- Right: Login Form -->
+  <div class="form-panel">
+    <div class="form-wrapper">
+      <div class="form-header">
+        <h2 class="form-title">Welcome back</h2>
+        <p class="form-subtitle">Sign in to your account to continue</p>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="error-banner" role="alert">
+          <svg class="error-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+          </svg>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" autocomplete="on">
+        <!-- Username -->
+        <div class="field-group">
+          <label for="username" class="field-label">Username</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" />
+            </svg>
+            <input
+              id="username"
+              type="text"
+              formControlName="username"
+              class="form-input"
+              placeholder="Enter your username"
+              autocomplete="username"
+              [attr.aria-invalid]="loginForm.controls.username.touched && loginForm.controls.username.invalid"
+              [attr.aria-describedby]="loginForm.controls.username.touched && loginForm.controls.username.invalid ? 'username-error' : null"
+            />
+          </div>
+          @if (loginForm.controls.username.touched && loginForm.controls.username.invalid) {
+            <p id="username-error" class="field-error" role="alert">
+              @if (loginForm.controls.username.errors?.['required']) {
+                Username is required.
+              } @else if (loginForm.controls.username.errors?.['minlength']) {
+                Username must be at least 3 characters.
+              }
+            </p>
+          }
+        </div>
+
+        <!-- Password -->
+        <div class="field-group">
+          <label for="password" class="field-label">Password</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
+            </svg>
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              class="form-input pr-11"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              [attr.aria-invalid]="loginForm.controls.password.touched && loginForm.controls.password.invalid"
+              [attr.aria-describedby]="loginForm.controls.password.touched && loginForm.controls.password.invalid ? 'password-error' : null"
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+            >
+              @if (showPassword()) {
+                <svg viewBox="0 0 20 20" fill="currentColor" class="toggle-icon" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 00-1.06 1.06l14.5 14.5a.75.75 0 101.06-1.06l-1.745-1.745a10.029 10.029 0 003.3-4.38 1.651 1.651 0 000-1.185A10.004 10.004 0 009.999 3a9.956 9.956 0 00-4.744 1.194L3.28 2.22zM7.752 6.69l1.092 1.092a2.5 2.5 0 013.374 3.373l1.092 1.092a4 4 0 00-5.558-5.558z" clip-rule="evenodd" />
+                  <path d="M10.748 13.93l2.523 2.523A9.987 9.987 0 0110 17a10.004 10.004 0 01-9.335-6.41 1.651 1.651 0 010-1.186A10.007 10.007 0 014.052 5.11L7.07 8.13A4 4 0 0010.748 13.93z" />
+                </svg>
+              } @else {
+                <svg viewBox="0 0 20 20" fill="currentColor" class="toggle-icon" aria-hidden="true">
+                  <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                  <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.186A10.004 10.004 0 0110 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0110 17c-4.257 0-7.893-2.66-9.336-6.41zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                </svg>
+              }
+            </button>
+          </div>
+          @if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
+            <p id="password-error" class="field-error" role="alert">
+              @if (loginForm.controls.password.errors?.['required']) {
+                Password is required.
+              } @else if (loginForm.controls.password.errors?.['minlength']) {
+                Password must be at least 6 characters.
+              }
+            </p>
+          }
+        </div>
+
+        <!-- Remember me & Forgot -->
+        <div class="form-extras">
+          <label class="remember-label">
+            <input type="checkbox" class="remember-checkbox" />
+            <span>Remember me</span>
+          </label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          class="submit-btn"
+          [disabled]="isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            <svg class="spinner" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            Signing in…
+          } @else {
+            Sign in
+          }
+        </button>
+      </form>
+
+      <p class="signup-prompt">
+        Don't have an account?
+        <a href="#" class="signup-link">Create one</a>
+      </p>
+    </div>
+  </div>
+</div>
